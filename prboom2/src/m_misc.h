@@ -67,4 +67,6 @@ typedef struct array_s
 void M_ArrayClear(array_t *data);
 void* M_ArrayGetNewItem(array_t *data, int itemsize);
 
+void M_CopyLumpName(char *dest, const char *src);
+
 #endif

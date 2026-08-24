@@ -18,8 +18,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomdef.h"
+#include "doomstat.h"
+#include "doomtype.h"
+#include "g_game.h"
 #include "info.h"
 #include "d_items.h"
+#include "m_misc.h"
 #include "p_inter.h"
 #include "p_spec.h"
 #include "p_map.h"
@@ -41,10 +46,15 @@
 
 #define IGNORE_VALUE -1
 
-const demostate_t (*demostates)[4];
-extern const demostate_t doom_demostates[][4];
-extern const demostate_t heretic_demostates[][4];
-extern const demostate_t hexen_demostates[][4];
+demostate_t (*demostates);
+int demostates_count = 0;
+
+extern demostate_t doom_demostates_registered[];
+extern demostate_t doom_demostates_commercial[];
+extern demostate_t doom_demostates_retail[];
+extern demostate_t heretic_demostates_shareware[];
+extern demostate_t heretic_demostates_registered[];
+extern demostate_t hexen_demostates[];
 
 weaponinfo_t* weaponinfo;
 
@@ -148,7 +158,15 @@ static void dsda_InitDoom(void) {
   dsda_InitializeSFX(doom_S_sfx, DOOM_NUMSFX);
   dsda_InitializeMusic(doom_S_music, DOOM_NUMMUSIC);
 
-  demostates = doom_demostates;
+  demostates = (gamemode <= registered)   ? doom_demostates_registered
+               : (gamemode == commercial) ? doom_demostates_commercial
+                                          : doom_demostates_retail;
+
+  demostates_count = (gamemode <= registered) ? 6 : 7;
+
+  // Allows use of PWAD HELP2 screen in demosequence
+  if (pwad_help2_check)
+    M_CopyLumpName(demostates[4].lump, "HELP2");
 
   weaponinfo = doom_weaponinfo;
 
@@ -287,7 +305,9 @@ static void dsda_InitHeretic(void) {
   dsda_InitializeSFX(heretic_S_sfx, HERETIC_NUMSFX);
   dsda_InitializeMusic(heretic_S_music, HERETIC_NUMMUSIC);
 
-  demostates = heretic_demostates;
+  demostates = (gamemode == shareware) ? heretic_demostates_shareware
+                                       : heretic_demostates_registered;
+  demostates_count = 7; // Always seven for both shareware and non-shareware
 
   weaponinfo = wpnlev1info;
 
@@ -445,6 +465,7 @@ static void dsda_InitHexen(void) {
   dsda_InitializeMusic(hexen_S_music, HEXEN_NUMMUSIC);
 
   demostates = hexen_demostates;
+  demostates_count = 7; // Only one size
 
   // weaponinfo = wpnlev1info;
 

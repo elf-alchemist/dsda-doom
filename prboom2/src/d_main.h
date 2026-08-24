@@ -36,6 +36,7 @@
 
 #include "m_fixed.h"
 #include "d_event.h"
+#include "sounds.h"
 #include "w_wad.h"
 
 /* CPhipps - removed wadfiles[] stuff to w_wad.h */
@@ -73,10 +74,18 @@ void AddIWAD(const char *iwad);
 
 extern const char *port_wad_file;
 
+typedef enum demostate_type_e
+{
+  DS_ART_SCREEN,
+  DS_DEMO_PLAYBACK,
+} demostate_type_t;
+
 typedef struct
 {
-  void (*func)(const char *);
-  const char *name;
+    demostate_type_t type;
+    char lump[9];
+    musicenum_t music;
+    int tics;
 } demostate_t;
 
 void D_SetPage(const char* name, int tics, int music);

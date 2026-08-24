@@ -1047,3 +1047,18 @@ void* M_ArrayGetNewItem(array_t *data, int itemsize)
 
   return (unsigned char*)data->data + (data->count - 1) * itemsize;
 }
+
+// Copies characters until either 8 characters are copied or a null terminator
+// is found.
+
+void M_CopyLumpName(char *dest, const char *src)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        dest[i] = src[i];
+        if (src[i] == '\0')
+        {
+            break;
+        }
+    }
+}

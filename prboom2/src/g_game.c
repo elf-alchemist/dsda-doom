@@ -3634,14 +3634,7 @@ const byte* G_ReadDemoHeaderEx(const byte *demo_p, size_t size, unsigned int par
 
     if (!demo_p)
     {
-      if (failonerror)
-      {
-        I_Error("G_ReadDemoHeader: wrong demo header\n");
-      }
-      else
-      {
-        return NULL;
-      }
+      return NULL;
     }
 
     // update the start of the demo header

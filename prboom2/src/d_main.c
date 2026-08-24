@@ -709,10 +709,6 @@ static void D_PageDrawer(void)
     return;
   }
 
-  // Allows use of PWAD HELP2 screen in demosequence
-  if (demosequence == 4 && pwad_help2_check)
-    pagename = "HELP2";
-
   // proff/nicolas 09/14/98 -- now stretchs bitmaps to fullscreen!
   // CPhipps - updated for new patch drawing
   // proff - added M_DrawCredits
@@ -760,88 +756,79 @@ void D_SetPage(const char* name, int tics, int music)
   D_SetPageName(name);
 }
 
-static void D_DrawTitle1(const char *name)
-{
-  D_SetPage(name, TICRATE * 170 / 35, mus_intro);
-}
-
-static void D_DrawTitle2(const char *name)
-{
-  D_SetPage(name, 0, mus_dm2ttl);
-}
-
 /* killough 11/98: tabulate demo sequences
  */
 
-extern const demostate_t (*demostates)[4];
+extern demostate_t (*demostates);
+extern int demostates_count;
 
-const demostate_t doom_demostates[][4] =
+// Doom
+demostate_t doom_demostates_registered[] =
 {
-  {
-    {D_DrawTitle1, "TITLEPIC"},
-    {D_DrawTitle1, "TITLEPIC"},
-    {D_DrawTitle2, "TITLEPIC"},
-    {D_DrawTitle1, "TITLEPIC"},
-  },
+  { DS_ART_SCREEN,    "TITLEPIC", mus_intro, 170, },
+  { DS_DEMO_PLAYBACK, "DEMO1",    mus_None,  0,   },
+  { DS_ART_SCREEN,    "CREDIT",   mus_None,  200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",    mus_None,  0,   },
+  { DS_ART_SCREEN,    "HELP2",    mus_None,  200, },
+  { DS_DEMO_PLAYBACK, "DEMO3",    mus_None,  0,   },
+};
 
-  {
-    {G_DeferedPlayDemo, "demo1"},
-    {G_DeferedPlayDemo, "demo1"},
-    {G_DeferedPlayDemo, "demo1"},
-    {G_DeferedPlayDemo, "demo1"},
-  },
+// Ultimate Doom
+demostate_t doom_demostates_retail[] =
+{
+  { DS_ART_SCREEN,    "TITLEPIC", mus_intro, 170, },
+  { DS_DEMO_PLAYBACK, "DEMO1",    mus_None,  0,   },
+  { DS_ART_SCREEN,    "CREDIT",   mus_None,  200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",    mus_None,  0,   },
+  { DS_ART_SCREEN,    "CREDIT",   mus_None,  200, },
+  { DS_DEMO_PLAYBACK, "DEMO3",    mus_None,  0,   },
+  { DS_DEMO_PLAYBACK, "DEMO4",    mus_None,  0,   },
+};
 
-  {
-    {D_SetPageName, NULL},
-    {D_SetPageName, NULL},
-    {D_SetPageName, NULL},
-    {D_SetPageName, NULL},
-  },
+// Doom II & Final Doom
+demostate_t doom_demostates_commercial[] =
+{
+  { DS_ART_SCREEN,    "TITLEPIC", mus_dm2ttl, 385, },
+  { DS_DEMO_PLAYBACK, "DEMO1",    mus_None,   0,   },
+  { DS_ART_SCREEN,    "CREDIT",   mus_None,   200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",    mus_None,   0,   },
+  { DS_ART_SCREEN,    "TITLEPIC", mus_dm2ttl, 385, },
+  { DS_DEMO_PLAYBACK, "DEMO3",    mus_None,   0,   },
+  { DS_DEMO_PLAYBACK, "DEMO4",    mus_None,   0,   },
+};
 
-  {
-    {G_DeferedPlayDemo, "demo2"},
-    {G_DeferedPlayDemo, "demo2"},
-    {G_DeferedPlayDemo, "demo2"},
-    {G_DeferedPlayDemo, "demo2"},
-  },
+// Heretic Demo
+demostate_t heretic_demostates_shareware[7] = {
+  { DS_ART_SCREEN,    "TITLE",  heretic_mus_titl, 210, },
+  { DS_ART_SCREEN,    "TITLE",  mus_None,         140, },
+  { DS_DEMO_PLAYBACK, "DEMO1",  mus_None,         0,   },
+  { DS_ART_SCREEN,    "CREDIT", mus_None,         200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",  mus_None,         0,   },
+  { DS_ART_SCREEN,    "ORDER",  mus_None,         200, },
+  { DS_DEMO_PLAYBACK, "DEMO3",  mus_None,         0,   },
+};
 
-  {
-    {D_SetPageName, "HELP2"},
-    {D_SetPageName, "HELP2"},
-    {D_SetPageName, "CREDIT"},
-    {D_DrawTitle1,  "TITLEPIC"},
-  },
+// Heretic
+demostate_t heretic_demostates_registered[7] = {
+  { DS_ART_SCREEN,    "TITLE",  heretic_mus_titl, 210, },
+  { DS_ART_SCREEN,    "TITLE",  mus_None,         140, },
+  { DS_DEMO_PLAYBACK, "DEMO1",  mus_None,         0,   },
+  { DS_ART_SCREEN,    "CREDIT", mus_None,         200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",  mus_None,         0,   },
+  { DS_ART_SCREEN,    "CREDIT", mus_None,         200, },
+  { DS_DEMO_PLAYBACK, "DEMO3",  mus_None,         0,   },
+};
 
-  {
-    {G_DeferedPlayDemo, "demo3"},
-    {G_DeferedPlayDemo, "demo3"},
-    {G_DeferedPlayDemo, "demo3"},
-    {G_DeferedPlayDemo, "demo3"},
-  },
-
-  {
-    {NULL},
-    {NULL},
-    // e6y
-    // Both Plutonia and TNT are commercial like Doom2,
-    // but in difference from  Doom2, they have demo4 in demo cycle.
-    {G_DeferedPlayDemo, "demo4"},
-    {D_SetPageName, "CREDIT"},
-  },
-
-  {
-    {NULL},
-    {NULL},
-    {NULL},
-    {G_DeferedPlayDemo, "demo4"},
-  },
-
-  {
-    {NULL},
-    {NULL},
-    {NULL},
-    {NULL},
-  }
+// Hexen
+demostate_t hexen_demostates[7] =
+{
+  { DS_ART_SCREEN,    "TITLE",   hexen_mus_hexen, 280, },
+  { DS_ART_SCREEN,    "TITLE",   mus_None,        210, },
+  { DS_DEMO_PLAYBACK, "DEMO1",   mus_None,        0,   },
+  { DS_ART_SCREEN,    "CREDITS", mus_None,        200, },
+  { DS_DEMO_PLAYBACK, "DEMO2",   mus_None,        0,   },
+  { DS_ART_SCREEN,    "CREDIT",  mus_None,        200, },
+  { DS_DEMO_PLAYBACK, "DEMO3",   mus_None,        0,   },
 };
 
 /*
@@ -851,35 +838,28 @@ const demostate_t doom_demostates[][4] =
 
 void D_DoAdvanceDemo(void)
 {
+  demostate_t *current;
+
   players[consoleplayer].playerstate = PST_LIVE;  /* not reborn */
   advancedemo = false;
   dsda_ResetPauseMode();
   gameaction = ga_nothing;
-
-  pagetic = TICRATE * 11;         /* killough 11/98: default behavior */
   gamestate = GS_DEMOSCREEN;
 
-  if (netgame && !demoplayback)
-    demosequence = 0;
-  else if (!demostates[++demosequence][gamemode].func)
-    demosequence = 0;
+  demosequence = (demosequence + 1) % demostates_count;
+  current = &demostates[demosequence];
 
-  // do not even attempt to play DEMO4 if it is not available
-  if (demosequence == 6 && gamemode == commercial && !W_LumpNameExists("demo4"))
-    demosequence = 0;
-
-  if (dsda_SimpleDemoLoop())
+  switch(current->type)
   {
-    // Skip blank / IWAD demos in PWADs
-    if (demostates[demosequence][gamemode].func == G_DeferedPlayDemo)
-      demosequence++;
-
-    // Limit to just TITLEPIC / CREDIT
-    if (demosequence > (raven ? 3 : 2))
-      demosequence = 0;
+    case DS_ART_SCREEN:
+      D_SetPage(current->lump, current->tics, current->music);
+      break;
+    case DS_DEMO_PLAYBACK:
+      G_DeferedPlayDemo(current->lump);
+      break;
+    default:
+      I_Error("Unknown demostate value %d", current->type);
   }
-
-  demostates[demosequence][gamemode].func(demostates[demosequence][gamemode].name);
 }
 
 //

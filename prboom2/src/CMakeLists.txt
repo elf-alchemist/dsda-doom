@@ -269,7 +269,6 @@ set(COMMON_SRC
     g_game.h
     g_overflow.c
     g_overflow.h
-    heretic/d_main.c
     heretic/def.h
     heretic/dstrings.h
     heretic/f_finale.h
@@ -289,7 +288,6 @@ set(COMMON_SRC
     hexen/info.c
     hexen/f_finale.c
     hexen/f_finale.h
-    hexen/h2_main.c
     hexen/in_lude.c
     hexen/in_lude.h
     hexen/p_acs.c

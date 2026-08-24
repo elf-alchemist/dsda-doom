@@ -717,31 +717,33 @@ static const byte* dsda_ReadUMAPINFODemoHeader(const byte* demo_p, const byte* h
   if (demo_p - header_p + 9 > size)
     return NULL;
 
-  if (strncmp((const char *)demo_p, "PR+UM", 5) != 0)
-    I_Error("G_ReadDemoHeader: Unknown demo format");
+  if (strncmp((const char *)demo_p, "PR+UM", 5) != 0) {
+    lprintf(LO_WARN, "G_ReadDemoHeader: Unknown demo format. Unsupported demo signature.\n");
+    return NULL;
+  }
 
   demo_p += 6;
 
   // the defunct format had only version 1
   if (*demo_p++ != 1)
-    I_Error("G_ReadDemoHeader: Unknown demo format");
+    I_Error("G_ReadDemoHeader: Unknown demo format. Unknown PR+UM version.");
 
   // the defunct format had only one extension (in two bytes)
   if (*demo_p++ != 1 || *demo_p++ != 0)
-    I_Error("G_ReadDemoHeader: Unknown demo format");
+    I_Error("G_ReadDemoHeader: Unknown demo format. Unknown PR+UM extensions.");
 
   if (demo_p - header_p + 1 > size)
     return NULL;
 
   // the defunct extension had length 8
   if (*demo_p++ != 8)
-    I_Error("G_ReadDemoHeader: Unknown demo format");
+    I_Error("G_ReadDemoHeader: Unknown demo format. Unknown PR+UM extension length.");
 
   if (demo_p - header_p + 8 > size)
     return NULL;
 
   if (strncmp((const char *)demo_p, "UMAPINFO", 8))
-    I_Error("G_ReadDemoHeader: Unknown demo format");
+    I_Error("G_ReadDemoHeader: Unknown demo format. PR+UM extension is not \"UMAPINFO\".");
 
   demo_p += 8;
 
